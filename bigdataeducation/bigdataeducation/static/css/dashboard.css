@@ -1,0 +1,63 @@
+/* 页面整体容器 */
+.page-wrapper {
+    padding-top: 80px; /* 增加顶部padding，为固定页眉留出更多空间 */
+}
+
+/* 统计数据容器 */
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background: #f8f9fa;
+    margin: 0 20px 20px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 单个统计项 */
+.stat-box {
+    text-align: center;
+    padding: 15px 25px;
+    background: white;
+    border-radius: 6px;
+    min-width: 150px;
+}
+
+/* 统计数字 */
+.stat-number {
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 5px;
+}
+
+/* 统计标签 */
+.stat-label {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+/* 内容区布局 */
+.content-layout {
+    display: flex;
+    margin: 0 20px;
+    gap: 20px;
+}
+
+/* 左侧边栏 */
+.sidebar {
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 主要内容区 */
+.main-content {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+} 

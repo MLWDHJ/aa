@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>系统设置 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <style>
+        .settings-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .submit-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页眉 -->
+    <header class="global-header">
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='images/教育决策支持系统.png') }}" alt="教育决策支持系统" class="logo">
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-item">返回首页</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-item">管理仪表板</a>
+                <span class="nav-item">管理员：{{ session['username'] }}</span>
+                <a href="{{ url_for('logout') }}" class="nav-item">退出登录</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="settings-container">
+        <h1>系统设置</h1>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('update_settings') }}">
+            <div class="form-group">
+                <label for="site_name">系统名称：</label>
+                <input type="text" id="site_name" name="site_name" value="{{ settings.site_name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="maintenance_mode">系统状态：</label>
+                <select id="maintenance_mode" name="maintenance_mode">
+                    <option value="0" {% if not settings.maintenance_mode %}selected{% endif %}>正常运行</option>
+                    <option value="1" {% if settings.maintenance_mode %}selected{% endif %}>维护模式</option>
+                </select>
+            </div>
+            <button type="submit" class="submit-btn">保存设置</button>
+        </form>
+    </div>
+</body>
+</html> 

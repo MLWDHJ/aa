@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>回答问题 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <style>
+        .answer-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .question-content {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+
+        .answer-form {
+            margin-top: 20px;
+        }
+
+        .answer-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            resize: vertical;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .source-link {
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        .source-link:hover {
+            text-decoration: underline;
+        }
+
+        .existing-answer {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .answer-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="answer-container">
+        <div class="question-section">
+            <h2>问题详情</h2>
+            <div class="question-meta">
+                <p>提问者：{{ question.user_name }}</p>
+                <p>提问时间：{{ question.create_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                {% if question.news_title %}
+                    <p>来自资讯：
+                        <a href="{{ url_for('news_detail', news_id=question.news_id) }}" class="source-link">
+                            {{ question.news_title }}
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+            <div class="question-content">
+                {{ question.content }}
+            </div>
+        </div>
+
+        {% if question.answer_content %}
+            <div class="existing-answer">
+                <h3>现有回答</h3>
+                <div>{{ question.answer_content }}</div>
+                <div class="answer-meta">
+                    回答者：{{ question.answered_by }}
+                    <span>回答时间：{{ question.answer_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="answer-form">
+            <h3>{% if question.answer_content %}修改回答{% else %}提供回答{% endif %}</h3>
+            <form method="POST">
+                <textarea class="answer-textarea" name="answer" placeholder="请输入回答内容..." required>{{ question.answer_content or '' }}</textarea>
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">提交回答</button>
+                    <a href="{{ url_for('admin_questions', news_id=question.news_id) if question.news_id else url_for('admin_questions') }}" class="btn btn-secondary">返回列表</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html> 

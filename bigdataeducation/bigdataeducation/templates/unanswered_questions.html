@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>未回答问题列表</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>未回答问题列表</h1>
+        <div class="questions-list">
+            {% for question in questions %}
+            <div class="question-item">
+                <h3>{{ question.content }}</h3>
+                <div class="meta">
+                    <span>提问时间：{{ question.create_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <form method="POST" action="{{ url_for('answer_question', question_id=question.id) }}" class="answer-form">
+                    <textarea name="content" placeholder="输入回答内容" required></textarea>
+                    <input type="text" name="teacher_name" placeholder="教师姓名" required>
+                    <button type="submit">提交回答</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html> 

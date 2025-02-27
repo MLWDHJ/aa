@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #007bff;
+            background-color: #f8f9fa;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info span {
+            color: #666;
+        }
+
+        .user-info a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .user-info a:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="{{ url_for('index') }}" class="logo">教育决策支持系统</a>
+        
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">首页</a>
+            <a href="{{ url_for('decision_list') }}">决策列表</a>
+            <a href="{{ url_for('news_list') }}">资讯列表</a>
+            {% if session.get('role') == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}">管理后台</a>
+            {% endif %}
+        </div>
+
+        <div class="user-info">
+            {% if session.get('user_id') %}
+                <span>欢迎，{{ session.get('username') }}</span>
+                {% if session.get('role') == 'admin' %}
+                    <span>(管理员)</span>
+                {% endif %}
+                <a href="{{ url_for('profile') }}">个人中心</a>
+                <a href="{{ url_for('logout') }}">退出登录</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">登录</a>
+                <a href="{{ url_for('register') }}">注册</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html> 

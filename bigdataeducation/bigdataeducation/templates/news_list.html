@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>资讯列表 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .news-list {
+            margin-top: 20px;
+        }
+        .news-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .news-item h2 {
+            margin: 0 0 10px 0;
+        }
+        .news-item h2 a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .meta span {
+            margin-right: 15px;
+        }
+        .excerpt {
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页眉 -->
+    <header class="global-header">
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='images/教育决策支持系统.png') }}" alt="教育决策支持系统" class="logo">
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-item">首页</a>
+                <a href="{{ url_for('decision_list') }}" class="nav-item">决策列表</a>
+                <a href="{{ url_for('news_list') }}" class="nav-item active">资讯列表</a>
+                {% if 'user_id' in session %}
+                    <a href="{{ url_for('profile') }}" class="nav-item">个人资料</a>
+                    <span class="nav-item">欢迎，{{ session['username'] }}</span>
+                    <a href="{{ url_for('logout') }}" class="nav-item">退出登录</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-item">登录</a>
+                    <a href="{{ url_for('register') }}" class="nav-item">注册</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>资讯列表</h1>
+        <div class="news-list">
+            {% for news_item in news %}
+            <div class="news-item">
+                <h2><a href="{{ url_for('news_detail', news_id=news_item.news_id) }}">{{ news_item.title }}</a></h2>
+                <div class="meta">
+                    <span class="category">{{ news_item.category }}</span>
+                    <span class="author">作者：{{ news_item.author_name }}</span>
+                    <span class="time">发布时间：{{ news_item.create_time.strftime('%Y-%m-%d') }}</span>
+                </div>
+                <p class="excerpt">{{ news_item.content[:200] }}...</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html> 

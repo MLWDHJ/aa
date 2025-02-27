@@ -1,0 +1,181 @@
+<div class="carousel-container">
+    <div class="carousel">
+        <div class="carousel-slides">
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/finger-3389916.jpg') }}" alt="教育决策">
+                <div class="slide-content">
+                    <h2>智能决策支持</h2>
+                    <p>利用数据分析助力教育决策</p>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/love-7047643.jpg') }}" alt="教育资讯">
+                <div class="slide-content">
+                    <h2>教育资讯平台</h2>
+                    <p>及时获取最新教育动态</p>
+                </div>
+            </div>
+            <div class="slide">
+                <img src="{{ url_for('static', filename='images/man-3672010.jpg') }}" alt="协同决策">
+                <div class="slide-content">
+                    <h2>协同决策机制</h2>
+                    <p>多方参与，共同决策</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-button prev">&lt;</button>
+        <button class="carousel-button next">&gt;</button>
+        <div class="carousel-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+</div>
+
+<style>
+.carousel-container {
+    width: 100%;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 400px;
+}
+
+.carousel-slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    height: 100%;
+}
+
+.slide {
+    min-width: 100%;
+    position: relative;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slide-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    color: white;
+}
+
+.slide-content h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.slide-content p {
+    margin: 10px 0 0;
+    font-size: 16px;
+}
+
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.3);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+    transition: background-color 0.3s;
+}
+
+.carousel-button:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+.prev {
+    left: 10px;
+}
+
+.next {
+    right: 10px;
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background: white;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const carousel = document.querySelector('.carousel-slides');
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevButton = document.querySelector('.prev');
+    const nextButton = document.querySelector('.next');
+    
+    let currentSlide = 0;
+    const slideCount = slides.length;
+    
+    function updateCarousel() {
+        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+    }
+    
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slideCount;
+        updateCarousel();
+    }
+    
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + slideCount) % slideCount;
+        updateCarousel();
+    }
+    
+    // 按钮事件
+    nextButton.addEventListener('click', nextSlide);
+    prevButton.addEventListener('click', prevSlide);
+    
+    // 点击圆点切换
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentSlide = index;
+            updateCarousel();
+        });
+    });
+    
+    // 自动轮播
+    setInterval(nextSlide, 5000);
+});
+</script> 

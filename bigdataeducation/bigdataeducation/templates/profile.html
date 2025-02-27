@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>个人资料 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <style>
+        .profile-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        .profile-sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-main {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .activity-section {
+            margin-top: 20px;
+        }
+
+        .activity-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            background: #2196F3;
+        }
+
+        .btn:hover {
+            background: #1976D2;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background: #e3f2fd;
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="profile-container">
+        <!-- 左侧信息栏 -->
+        <div class="profile-sidebar">
+            <div class="profile-header">
+                <h2>{{ user.username }}</h2>
+                <span class="role-badge">{{ user.role }}</span>
+            </div>
+
+            <div class="basic-info">
+                <p><strong>学号：</strong>{{ user.student_id or '未设置' }}</p>
+                <p><strong>性别：</strong>{{ user.gender or '未设置' }}</p>
+                <p><strong>邮箱：</strong>{{ user.email or '未设置' }}</p>
+                <p><strong>注册时间：</strong>{{ user.create_time.strftime('%Y-%m-%d') }}</p>
+                <p><strong>账号状态：</strong>{{ user.status }}</p>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-box">
+                    <div class="stat-number">{{ user.comment_count }}</div>
+                    <div class="stat-label">评论数</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">{{ user.vote_count }}</div>
+                    <div class="stat-label">投票数</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">{{ user.question_count }}</div>
+                    <div class="stat-label">提问数</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧主要内容 -->
+        <div class="profile-main">
+            <h3>最近活动</h3>
+
+            <!-- 最近的评论 -->
+            {% if comments %}
+            <div class="activity-section">
+                <h4>最近评论</h4>
+                {% for comment in comments %}
+                <div class="activity-item">
+                    <div>{{ comment.content }}</div>
+                    <div class="activity-time">
+                        评论了决策：{{ comment.decision_title }}
+                        <span>{{ comment.create_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- 最近的投票 -->
+            {% if votes %}
+            <div class="activity-section">
+                <h4>最近投票</h4>
+                {% for vote in votes %}
+                <div class="activity-item">
+                    <div>
+                        对决策 "{{ vote.decision_title }}" 投了
+                        {% if vote.vote_type == 'support' %}
+                            支持票
+                        {% else %}
+                            反对票
+                        {% endif %}
+                    </div>
+                    <div class="activity-time">{{ vote.create_time.strftime('%Y-%m-%d %H:%M') }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- 最近的问题 -->
+            {% if questions %}
+            <div class="activity-section">
+                <h4>最近提问</h4>
+                {% for question in questions %}
+                <div class="activity-item">
+                    <div>{{ question.content }}</div>
+                    <div class="activity-time">
+                        在资讯 "{{ question.news_title }}" 下提问
+                        <span>{{ question.create_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- 修改资料表单 -->
+            <div class="activity-section">
+                <h4>修改资料</h4>
+                <form method="POST" action="{{ url_for('update_profile') }}">
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" name="email" value="{{ user.email or '' }}">
+                    </div>
+                    <button type="submit" class="btn">更新资料</button>
+                </form>
+            </div>
+
+            <!-- 修改密码表单 -->
+            <div class="activity-section">
+                <h4>修改密码</h4>
+                <form method="POST" action="{{ url_for('change_password') }}">
+                    <div class="form-group">
+                        <label for="current_password">当前密码</label>
+                        <input type="password" id="current_password" name="current_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">新密码</label>
+                        <input type="password" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">确认新密码</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <button type="submit" class="btn">修改密码</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户行为分析 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <style>
+        .analysis-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .analysis-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .analysis-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196F3;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+        }
+        
+        .vote-chart {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .weight-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .weight-3 { background: #E3F2FD; color: #1976D2; }
+        .weight-1 { background: #E8F5E9; color: #388E3C; }
+        .weight-0-5 { background: #FFEBEE; color: #D32F2F; }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <div class="admin-wrapper">
+        <div class="analysis-container">
+            <!-- 异常用户分析 -->
+            <div class="analysis-card">
+                <h2 class="analysis-title">异常行为用户分析</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>角色</th>
+                            <th>投票模式</th>
+                            <th>评论率</th>
+                            <th>权重</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in abnormal_users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>{{ "%.2f"|format(user.vote_pattern) }}</td>
+                            <td>{{ "%.2f"|format(user.comment_ratio) }}</td>
+                            <td>
+                                <span class="weight-tag weight-{{ user.vote_weight|replace('.', '-') }}">
+                                    {{ user.vote_weight }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 带权重的投票统计 -->
+            <div class="analysis-card">
+                <h2 class="analysis-title">带权重的投票统计</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>决策标题</th>
+                            <th>支持(加权)</th>
+                            <th>反对(加权)</th>
+                            <th>总票数</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vote in weighted_votes %}
+                        <tr>
+                            <td>{{ vote.title }}</td>
+                            <td>{{ "%.1f"|format(vote.weighted_support) }}</td>
+                            <td>{{ "%.1f"|format(vote.weighted_oppose) }}</td>
+                            <td>{{ vote.total_votes }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

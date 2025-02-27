@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>问题管理 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <style>
+        .questions-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .question-content {
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+
+        .answer-form {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .answer-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            padding: 8px 15px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #1976D2;
+        }
+
+        .answer-content {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .answer-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .source-link {
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        .source-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <div class="admin-wrapper">
+        <div class="questions-container">
+            {% if news_title %}
+                <h1>{{ news_title }} - 问题管理</h1>
+            {% else %}
+                <h1>所有问题管理</h1>
+            {% endif %}
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if not questions %}
+                <div class="no-questions">
+                    {% if news_title %}
+                        <p>该资讯暂无问题</p>
+                    {% else %}
+                        <p>暂无任何问题</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            {% for question in questions %}
+            <div class="question-card">
+                <div class="question-header">
+                    <div class="question-meta">
+                        <span>提问者：{{ question.user_name }}</span>
+                        <span>时间：{{ question.create_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                    <div>
+                        {% if question.news_title and not news_title %}
+                            <a href="{{ url_for('news_detail', news_id=question.news_id) }}" class="source-link">
+                                来自资讯：{{ question.news_title }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="question-content">
+                    {{ question.content }}
+                </div>
+                
+                {% if question.answer_content %}
+                    <div class="answer-content">
+                        <div>{{ question.answer_content }}</div>
+                        <div class="answer-meta">
+                            回答者：{{ question.answered_by }}
+                            <span>回答时间：{{ question.answer_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="answer-form">
+                        <a href="{{ url_for('answer_question_page', question_id=question.question_id) }}" class="submit-btn">
+                            回答问题
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,104 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;       
+    height: 100vh;    
+    margin: 0;   
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.carousel-list {
+    position: absolute;
+    width: 300%;        
+    height: 100%;       
+    transition: left 0.5s ease;
+}
+
+.carousel-list li {
+    float: left;
+    width: 33.333%;  
+    height: 100%;  
+    position: relative;
+}
+.image-title {
+    position: absolute;
+    bottom: 60px; /* 距离底部距离 */
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 2em;
+    font-family: 'Microsoft Yahei', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    white-space: nowrap;
+    z-index: 2;
+    animation: fadeInUp 0.8s ease; /* 动画效果 */
+}
+
+.carousel-list li img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.carousel-dots {
+    position: static;
+    transform: none;
+    margin: 0;
+}
+.carousel-dots li {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+.carousel-nav {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(0,0,0,0.3);
+    padding: 8px 15px;
+    border-radius: 30px;
+}
+
+.more-link {
+    color: white;
+    font-family: 'Microsoft Yahei', sans-serif;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.more-link:hover {
+    transform: translateX(5px);
+    text-shadow: 0 0 8px rgba(255,255,255,0.8);
+}
+.carousel-dots .active {
+    background: #fff;
+}
+
+
+
+
+
+
+
+
+
+
+
+

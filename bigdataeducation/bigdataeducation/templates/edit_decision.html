@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑决策 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group textarea {
+            width: 100%;
+            height: 300px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .submit-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页眉 -->
+    <header class="global-header">
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='images/教育决策支持系统.png') }}" alt="教育决策支持系统" class="logo">
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-item">返回首页</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-item">管理仪表板</a>
+                <span class="nav-item">管理员：{{ session['username'] }}</span>
+                <a href="{{ url_for('logout') }}" class="nav-item">退出登录</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <h1>编辑决策</h1>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">决策标题：</label>
+                <input type="text" id="title" name="title" value="{{ decision.title }}" required>
+            </div>
+            <div class="form-group">
+                <label for="content">决策内容：</label>
+                <textarea id="content" name="content" required>{{ decision.content }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="status">状态：</label>
+                <select id="status" name="status">
+                    <option value="进行中" {% if decision.status == '进行中' %}selected{% endif %}>进行中</option>
+                    <option value="已结束" {% if decision.status == '已结束' %}selected{% endif %}>已结束</option>
+                    <option value="已取消" {% if decision.status == '已取消' %}selected{% endif %}>已取消</option>
+                </select>
+            </div>
+            <button type="submit" class="submit-btn">保存修改</button>
+        </form>
+    </div>
+</body>
+</html> 

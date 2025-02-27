@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>决策分析 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .analysis-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .decision-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .comments-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .comment-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        .comment-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .comment-content {
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页眉 -->
+    <header class="global-header">
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='images/教育决策支持系统.png') }}" alt="教育决策支持系统" class="logo">
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-item">返回首页</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-item">管理仪表板</a>
+                <span class="nav-item">管理员：{{ session['username'] }}</span>
+                <a href="{{ url_for('logout') }}" class="nav-item">退出登录</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="analysis-container">
+        <div class="decision-info">
+            <h1>{{ decision.title }}</h1>
+            <p>发布时间：{{ decision.create_time.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p>发布者：{{ decision.creator_name }}</p>
+            <p>当前状态：{{ decision.status }}</p>
+            <a href="{{ url_for('generate_analysis_report', decision_id=decision.decision_id) }}" 
+               class="action-btn" style="margin-top: 10px;">
+                生成分析报告
+            </a>
+        </div>
+
+        <div class="stats-panel">
+            <div class="stat-card">
+                <h3>原始投票统计</h3>
+                <p>总投票数：{{ stats.total_votes }}</p>
+                <p>支持票数：{{ stats.vote_distribution.get('support', 0) }}</p>
+                <p>反对票数：{{ stats.vote_distribution.get('oppose', 0) }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>加权投票统计</h3>
+                <p>总权重：{{ "%.1f"|format(stats.weighted_total) }}</p>
+                <p>支持权重：{{ "%.1f"|format(stats.weighted_support) }}</p>
+                <p>反对权重：{{ "%.1f"|format(stats.weighted_oppose) }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>评论统计</h3>
+                <p>总评论数：{{ stats.total_comments }}</p>
+                {% for role, count in stats.comment_by_role.items() %}
+                <p>{{ role }}评论数：{{ count }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="charts-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="chart-card">
+                <h3>原始投票分布</h3>
+                <div style="max-width: 400px; margin: 0 auto;">
+                    <canvas id="voteChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>加权投票分布</h3>
+                <div style="max-width: 400px; margin: 0 auto;">
+                    <canvas id="weightedVoteChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="roleVoteChart"></canvas>
+        </div>
+
+        <div class="comments-section">
+            <h2>评论列表</h2>
+            {% for comment in comments %}
+            <div class="comment-item">
+                <div class="comment-meta">
+                    <span>{{ comment.username }}({{ comment.role }})</span>
+                    <span>{{ comment.create_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="comment-content">
+                    {{ comment.content }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // 原始投票分布图
+        var ctx = document.getElementById('voteChart').getContext('2d');
+        var voteChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['支持', '反对'],
+                datasets: [{
+                    data: [{{ support_count }}, {{ oppose_count }}],
+                    backgroundColor: ['#4CAF50', '#F44336']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+
+        // 加权投票分布图
+        var weightedCtx = document.getElementById('weightedVoteChart').getContext('2d');
+        var weightedVoteChart = new Chart(weightedCtx, {
+            type: 'pie',
+            data: {
+                labels: ['支持(加权)', '反对(加权)'],
+                datasets: [{
+                    data: [{{ weighted_support }}, {{ weighted_oppose }}],
+                    backgroundColor: ['#4CAF50', '#F44336']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.parsed || 0;
+                                return `${label}: ${value.toFixed(1)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 角色投票分布图
+        const roleVoteCtx = document.getElementById('roleVoteChart').getContext('2d');
+        const roleVoteData = {
+            labels: [],
+            datasets: [
+                {
+                    label: '支持',
+                    backgroundColor: '#4CAF50',
+                    data: []
+                },
+                {
+                    label: '反对',
+                    backgroundColor: '#F44336',
+                    data: []
+                }
+            ]
+        };
+
+        {% for role, votes in stats.vote_by_role.items() %}
+            roleVoteData.labels.push('{{ role }}');
+            roleVoteData.datasets[0].data.push({{ votes.get('support', 0) }});
+            roleVoteData.datasets[1].data.push({{ votes.get('oppose', 0) }});
+        {% endfor %}
+
+        new Chart(roleVoteCtx, {
+            type: 'bar',
+            data: roleVoteData,
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '各角色投票分布'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

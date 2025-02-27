@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ news.title }} - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <style>
+        .news-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .news-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .news-title {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .news-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        .news-meta span {
+            margin-right: 15px;
+        }
+        .news-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.6;
+        }
+        .news-content p {
+            margin: 0 0 15px 0;
+        }
+        .category-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #e3f2fd;
+            color: #1976D2;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .questions-section {
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .question-form {
+            margin-bottom: 20px;
+        }
+        .question-form textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        .submit-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background: #1976D2;
+        }
+        .questions-list {
+            margin-top: 20px;
+        }
+        .question-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        .question-item:last-child {
+            border-bottom: none;
+        }
+        .question-content {
+            margin-bottom: 10px;
+        }
+        .question-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .answer {
+            margin-top: 10px;
+            padding-left: 20px;
+            border-left: 3px solid #2196F3;
+            color: #333;
+        }
+        .answer-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页眉 -->
+    <header class="global-header">
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='images/教育决策支持系统.png') }}" alt="教育决策支持系统" class="logo">
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-item">首页</a>
+                <a href="{{ url_for('decision_list') }}" class="nav-item">决策列表</a>
+                <a href="{{ url_for('news_list') }}" class="nav-item active">资讯列表</a>
+                {% if 'user_id' in session %}
+                    <a href="{{ url_for('profile') }}" class="nav-item">个人资料</a>
+                    <span class="nav-item">欢迎，{{ session['username'] }}</span>
+                    <a href="{{ url_for('logout') }}" class="nav-item">退出登录</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-item">登录</a>
+                    <a href="{{ url_for('register') }}" class="nav-item">注册</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <div class="news-container">
+        <div class="news-header">
+            <h1 class="news-title">{{ news.title }}</h1>
+            <div class="news-meta">
+                <span class="category-tag">{{ news.category }}</span>
+                <span>作者：{{ news.author_name }}</span>
+                <span>发布时间：{{ news.create_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                <span>浏览量：{{ news.views }}</span>
+            </div>
+        </div>
+
+        <div class="news-content">
+            {{ news.content|safe }}
+        </div>
+
+        {% if 'user_id' in session %}
+        <div class="questions-section">
+            <h2>提问区</h2>
+            <form class="question-form" method="POST" action="{{ url_for('ask_question', news_id=news.news_id) }}">
+                <textarea name="content" placeholder="有什么想问的？在这里提出你的问题..." required></textarea>
+                <button type="submit" class="submit-btn">提交问题</button>
+            </form>
+
+            {% if questions %}
+            <div class="questions-list">
+                {% for question in questions %}
+                <div class="question-item">
+                    <div class="question-content">{{ question.content }}</div>
+                    <div class="question-meta">
+                        提问时间：{{ question.create_time.strftime('%Y-%m-%d %H:%M') }}
+                    </div>
+                    {% if question.answer %}
+                    <div class="answer">
+                        <div class="answer-content">{{ question.answer.content }}</div>
+                        <div class="answer-meta">
+                            回答者：{{ question.answer.answered_by }}
+                            回答时间：{{ question.answer.create_time.strftime('%Y-%m-%d %H:%M') }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>暂无问题</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html> 

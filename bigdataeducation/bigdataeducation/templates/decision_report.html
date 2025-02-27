@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>决策分析报告 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <style>
+        .report-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .report-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .report-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.8;
+        }
+        
+        .report-section {
+            margin-bottom: 30px;
+        }
+        
+        .report-section h2 {
+            color: #2196F3;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .report-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        
+        .print-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        
+        .print-btn:hover {
+            background: #1976D2;
+        }
+        
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <div class="report-container">
+        <div class="report-header">
+            <h1>{{ decision.title }} - 决策分析报告</h1>
+            <div class="report-meta">
+                <p>决策发起人：{{ decision.creator_name }}</p>
+                <p>报告生成时间：{{ now().strftime('%Y-%m-%d %H:%M') }}</p>
+            </div>
+        </div>
+        
+        <div class="report-content">
+            {{ report | safe | replace('\n', '<br>') }}
+        </div>
+        
+        <div class="no-print" style="text-align: center;">
+            <a href="javascript:window.print()" class="print-btn">打印报告</a>
+            <a href="{{ url_for('decision_analysis', decision_id=decision.decision_id) }}" class="print-btn" style="margin-left: 10px;">返回分析</a>
+        </div>
+    </div>
+</body>
+</html> 

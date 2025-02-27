@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>发布新资讯</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>发布新资讯</h1>
+        <form method="POST" class="news-form">
+            <div class="form-group">
+                <label for="title">资讯标题</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="category">资讯类别</label>
+                <select id="category" name="category" required>
+                    <option value="活动">活动</option>
+                    <option value="比赛">比赛</option>
+                    <option value="通知">通知</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="content">资讯内容</label>
+                <textarea id="content" name="content" rows="10" required></textarea>
+            </div>
+            <button type="submit">发布资讯</button>
+        </form>
+    </div>
+</body>
+</html> 

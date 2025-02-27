@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>决策列表 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉的css.css') }}">
+    <style>
+        .decisions-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .decision-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .decision-title {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .decision-title a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .decision-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .decision-content {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .decision-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+        }
+        .vote-info span {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页眉 -->
+    <header class="global-header">
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='images/教育决策支持系统.png') }}" alt="教育决策支持系统" class="logo">
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}" class="nav-item">首页</a>
+                <a href="{{ url_for('decision_list') }}" class="nav-item active">决策列表</a>
+                <a href="{{ url_for('news_list') }}" class="nav-item">资讯列表</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="decisions-container">
+        <h1>决策列表</h1>
+        {% for decision in decisions %}
+            <div class="decision-item">
+                <div class="decision-title">
+                    <a href="{{ url_for('decision_detail', decision_id=decision.decision_id) }}">{{ decision.title }}</a>
+                </div>
+                <div class="decision-meta">
+                    <span>发布者：{{ decision.creator_name }}</span>
+                    <span>发布时间：{{ decision.create_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                    <span>状态：{{ decision.status }}</span>
+                </div>
+                <div class="decision-content">
+                    {{ decision.content[:200] }}...
+                </div>
+                <div class="decision-footer">
+                    <div class="vote-info">
+                        <span>支持：{{ decision.support_count or 0 }}</span>
+                        <span>反对：{{ decision.oppose_count or 0 }}</span>
+                    </div>
+                    <a href="{{ url_for('decision_detail', decision_id=decision.decision_id) }}">查看详情</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户管理 - 教育决策系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/页眉栏css.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .user-table th, .user-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .user-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+        }
+        .user-table tr:hover {
+            background: #f9f9f9;
+        }
+        .status-active {
+            color: #4CAF50;
+        }
+        .status-inactive {
+            color: #F44336;
+        }
+        .role-select, .status-select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .update-btn {
+            padding: 5px 10px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .update-btn:hover {
+            background: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <div class="admin-wrapper">
+        <div class="admin-container">
+            <h1>用户管理</h1>
+            
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="flash-message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>用户名</th>
+                        <th>学号</th>
+                        <th>性别</th>
+                        <th>邮箱</th>
+                        <th>角色</th>
+                        <th>状态</th>
+                        <th>注册时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.student_id }}</td>
+                        <td>{{ user.gender }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('update_user_role', user_id=user.user_id) }}">
+                                <select name="role" class="role-select">
+                                    <option value="student" {% if user.role == 'student' %}selected{% endif %}>学生</option>
+                                    <option value="teacher" {% if user.role == 'teacher' %}selected{% endif %}>教师</option>
+                                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>管理员</option>
+                                </select>
+                        </td>
+                        <td>
+                                <select name="status" class="status-select">
+                                    <option value="active" {% if user.status == 'active' %}selected{% endif %}>正常</option>
+                                    <option value="inactive" {% if user.status == 'inactive' %}selected{% endif %}>禁用</option>
+                                </select>
+                        </td>
+                        <td>{{ user.create_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                                <button type="submit" class="update-btn">更新</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 
